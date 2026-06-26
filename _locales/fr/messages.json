@@ -1,0 +1,30 @@
+{
+  "extName": {
+    "message": "CardMarket YuGiOh Toolkit",
+    "description": "Nom de l'extension."
+  },
+  "extDescription": {
+    "message": "Outillage CardMarket pour YuGiOh : raretes restaurees, navigation clavier dans le BulkListing, garde-fous pour la modification de masse. Pas de bot, pas d'appels automatises.",
+    "description": "Description de l'extension."
+  },
+
+  "optionsTitle": { "message": "CardMarket YuGiOh Toolkit — Reglages" },
+
+  "sectionRarities": { "message": "Raretes" },
+  "raritiesEnabled": { "message": "Restaurer l'affichage des raretes sur les pages YuGiOh" },
+
+  "sectionKeyboard": { "message": "Navigation clavier du BulkListing" },
+  "keyboardNavEnabled": { "message": "Activer la navigation clavier" },
+  "invertNav": { "message": "Inverser : les fleches deplacent dans la grille, Shift change la quantite" },
+  "invertNavHint": { "message": "Par defaut : Haut/Bas changent la quantite, Shift+Fleches deplacent dans la grille (commentaire / nombre / prix / etat / langue)." },
+  "quantityStep": { "message": "Pas de quantite (+ / - et Haut/Bas)" },
+
+  "sectionMassMod": { "message": "Garde-fous de la modification de masse" },
+  "massModGuardsEnabled": { "message": "Ajouter les cases de verrouillage dans le bloc de modification de masse" },
+  "massModHint": { "message": "Les cases « ne pas toucher au prix / au nombre » se cochent automatiquement apres la premiere modif de masse." },
+
+  "sectionDebug": { "message": "Avance" },
+  "debug": { "message": "Activer les logs de debug dans la console" },
+
+  "saved": { "message": "Enregistre" }
+}

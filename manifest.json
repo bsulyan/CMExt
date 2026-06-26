@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extName__",
+  "version": "0.1.0",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
+  "permissions": ["storage"],
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.cardmarket.com/*/YuGiOh/*"],
+      "js": [
+        "src/content/common.js",
+        "src/content/rarities.js",
+        "src/content/bulklisting.js"
+      ],
+      "css": [
+        "styles/rarities.css",
+        "styles/bulklisting.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

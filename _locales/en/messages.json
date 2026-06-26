@@ -1,0 +1,30 @@
+{
+  "extName": {
+    "message": "CardMarket YuGiOh Toolkit",
+    "description": "Extension name."
+  },
+  "extDescription": {
+    "message": "CardMarket tooling for YuGiOh: restored rarities, keyboard navigation in BulkListing, mass-edit safeguards. No bot, no automated requests.",
+    "description": "Extension description."
+  },
+
+  "optionsTitle": { "message": "CardMarket YuGiOh Toolkit — Settings" },
+
+  "sectionRarities": { "message": "Rarities" },
+  "raritiesEnabled": { "message": "Restore rarity display on YuGiOh pages" },
+
+  "sectionKeyboard": { "message": "BulkListing keyboard navigation" },
+  "keyboardNavEnabled": { "message": "Enable keyboard navigation" },
+  "invertNav": { "message": "Invert: arrows move in the grid, Shift changes the quantity" },
+  "invertNavHint": { "message": "Default: Up/Down change the quantity, Shift+Arrows move in the grid (comment / number / price / condition / language)." },
+  "quantityStep": { "message": "Quantity step (+ / - and Up/Down)" },
+
+  "sectionMassMod": { "message": "Mass-edit safeguards" },
+  "massModGuardsEnabled": { "message": "Add lock checkboxes to the mass-edit panel" },
+  "massModHint": { "message": "The “don’t touch price / number” boxes are auto-checked after the first mass edit." },
+
+  "sectionDebug": { "message": "Advanced" },
+  "debug": { "message": "Enable debug logs in the console" },
+
+  "saved": { "message": "Saved" }
+}
