@@ -196,3 +196,19 @@
   color: #71717a;
   font-size: 12px;
 }
+
+#cmext-stocktools .cmext-page-scope {
+  margin: 0 0 8px;
+  padding: 7px 9px;
+  border: 1px solid #166534;
+  border-radius: 6px;
+  background: #052e16;
+  color: #86efac;
+  font-weight: 600;
+}
+
+#cmext-page-bulk-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}

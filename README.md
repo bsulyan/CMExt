@@ -104,6 +104,9 @@ automatisé**.
   (`Orders/Sales/Paid`, `Orders/Sales/Unpaid`, etc.), affiche à côté du
   compteur « N Commandes » la somme des totaux des commandes de la page.
 - **Outils stock** (panneau flottant sur les pages `Stock/Offers`) :
+  - sur la liste des cartes, le bouton intégré « Modifier en masse » ouvre la
+    multi-édition avec un périmètre verrouillé aux annonces visibles. Il ne suit
+    pas la pagination et ne scanne aucune extension ;
   - **Base locale des emplacements** — un scan (déclenché à la main) parcourt le
     stock et stocke les articles dans `chrome.storage.local`. Les commentaires
     au format `1-02 - MZMU` (rack `1-02`, puis extension) sont agrégés en vue

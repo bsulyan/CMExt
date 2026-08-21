@@ -72,6 +72,7 @@
     stop: false,      // demande d'arret
     targets: null,    // resultat de la derniere previsualisation
     plan: null,       // { field, mutate, showAfter } de la previsualisation
+    pageOnly: false,  // true = uniquement les lignes deja affichees dans le DOM
     settings: {}      // reglages, relus a chaud (seuils du prix conseille)
   };
 
@@ -100,6 +101,7 @@
     ui.applyBtn.disabled = busy || !state.targets || !state.targets.length;
     ui.stopBtn.disabled = !busy;
     ui.inspectBtn.disabled = busy;
+    if (ui.pageBtn) ui.pageBtn.disabled = busy;
   }
 
   // ---- Resume de la base + vue racks ---------------------------------------
@@ -431,6 +433,27 @@
     });
   }
 
+  // Le bouton integre a la page ne doit jamais elargir silencieusement son
+  // perimetre. On part donc exclusivement des lignes qui existent deja dans la
+  // table courante : aucun fetch de page, aucune pagination, aucun scan de
+  // l'extension. Les filtres restent disponibles pour reduire ce sous-ensemble.
+  function collectDisplayedRows(filters) {
+    var rows = [];
+    var noPriceRead = 0;
+    Array.prototype.slice.call(document.querySelectorAll(
+      '#UserOffersTable .table-body > [id^="stockRow"]'
+    )).forEach(function (node) {
+      var row = DB.parseStockRow(node);
+      if (filters.comment && !filters.comment(row.comment)) return;
+      if (filters.price) {
+        if (row.price == null) { noPriceRead++; return; }
+        if (!filters.price(row.price)) return;
+      }
+      rows.push(row);
+    });
+    return { rows: rows, noPriceRead: noPriceRead };
+  }
+
   // Cibles des modes classiques : aucun appel reseau, tout se decide sur ce que
   // la liste a deja donne.
   function plainTargets(rows, field, mutate, changeLabel) {
@@ -566,10 +589,20 @@
       : field + " : " + ui.searchInput.value + " -> " + ui.replaceInput.value;
     var showAfter = mode === "auto" || field === "comments";
 
-    selectedExpansions().then(function (expansions) {
-      if (!expansions.length) throw new Error(t("stNoExpansion", "Aucune extension selectionnee."));
-      return collectRows(expansions, filters);
-    }).then(function (collected) {
+    var source;
+    if (state.pageOnly) {
+      var displayed = collectDisplayedRows(filters);
+      logLine(t("stPageRows", "$1 annonce(s) lue(s) sur la page affichee.",
+        [String(displayed.rows.length)]), "cmext-dim");
+      source = Promise.resolve(displayed);
+    } else {
+      source = selectedExpansions().then(function (expansions) {
+        if (!expansions.length) throw new Error(t("stNoExpansion", "Aucune extension selectionnee."));
+        return collectRows(expansions, filters);
+      });
+    }
+
+    source.then(function (collected) {
       if (collected.noPriceRead) {
         logLine(t("stNoPriceRead", "$1 annonce(s) sans prix lisible, ecartee(s) par le filtre prix.",
           [String(collected.noPriceRead)]), "cmext-err");
@@ -582,7 +615,12 @@
       return autoTargets(collected.rows);
     }).then(function (res) {
       state.targets = res.targets;
-      state.plan = { field: field, mutate: built.mutate, showAfter: showAfter };
+      state.plan = {
+        field: field,
+        mutate: built.mutate,
+        showAfter: showAfter,
+        pageOnly: state.pageOnly
+      };
       renderPreview(res.targets, showAfter);
       if (res.unchanged) {
         logLine(t("stAutoUnchanged", "$1 annonce(s) deja au bon prix.", [String(res.unchanged)]), "cmext-dim");
@@ -607,7 +645,11 @@
     if (state.running || !state.targets || !state.targets.length || !state.plan) return;
     var targets = state.targets;
     var plan = state.plan;
-    if (!window.confirm(t("stConfirmApply", "Appliquer $1 modification(s) ?", [String(targets.length)]))) return;
+    var confirmKey = plan.pageOnly ? "stConfirmApplyPage" : "stConfirmApply";
+    var confirmFallback = plan.pageOnly
+      ? "Appliquer $1 modification(s) aux annonces de cette page uniquement ?"
+      : "Appliquer $1 modification(s) ?";
+    if (!window.confirm(t(confirmKey, confirmFallback, [String(targets.length)]))) return;
 
     setBusy(true);
     var done = 0, skipped = 0, errors = 0;
@@ -672,6 +714,11 @@
         [String(done), String(skipped), String(errors)]), errors ? "cmext-err" : "cmext-ok");
       if (state.stop) logLine(t("stStoppedAt", "Arrete a $1/$2.", [String(i), String(targets.length)]));
 
+      // En mode page, la reponse Ajax ne remplace pas les lignes comme le ferait
+      // le modal CardMarket. On synchronise les valeurs visibles afin que la
+      // page ne continue pas d'afficher les anciennes donnees.
+      if (plan.pageOnly) updateDisplayedRows(applied, plan.field);
+
       // Repercute les valeurs ecrites dans la base locale si elle existe, pour
       // les deux champs qu'elle connait.
       if (!Object.keys(applied).length) return null;
@@ -701,6 +748,40 @@
     });
   }
 
+  function replaceDisplayedNumber(text, value) {
+    var formatted = String(value);
+    if (text.indexOf(",") !== -1) formatted = formatted.replace(".", ",");
+    return text.replace(/[0-9]+(?:[.,][0-9]+)?/, formatted);
+  }
+
+  function updateDisplayedRows(applied, field) {
+    Object.keys(applied).forEach(function (id) {
+      var row = document.getElementById("stockRow" + id);
+      if (!row) return;
+      var value = String(applied[id]);
+      var nodes;
+      if (field === "comments") {
+        nodes = row.querySelectorAll(".product-comments span");
+        Array.prototype.forEach.call(nodes, function (node) {
+          if (node.classList.contains("fonticon-comments")) {
+            node.setAttribute("aria-label", value);
+            node.setAttribute("data-bs-original-title", value);
+          } else {
+            node.textContent = value;
+          }
+        });
+      } else if (field === "price") {
+        nodes = row.querySelectorAll(".price-container .color-primary, .mobile-offer-container .color-primary");
+        Array.prototype.forEach.call(nodes, function (node) {
+          node.textContent = replaceDisplayedNumber(node.textContent, value);
+        });
+      } else if (field === "count") {
+        nodes = row.querySelectorAll(".item-count");
+        Array.prototype.forEach.call(nodes, function (node) { node.textContent = value; });
+      }
+    });
+  }
+
   // ---- Construction du panneau ---------------------------------------------
   function syncModeInputs() {
     var mode = ui.modeSelect.value;
@@ -722,12 +803,45 @@
     ]);
   }
 
+  function clearPreview() {
+    state.targets = null;
+    state.plan = null;
+    if (ui.previewBox) ui.previewBox.textContent = "";
+    if (ui.applyBtn) ui.applyBtn.disabled = true;
+  }
+
+  function setPageOnly(enabled) {
+    enabled = !!enabled;
+    if (state.running || state.pageOnly === enabled) return;
+    state.pageOnly = enabled;
+    clearPreview();
+    if (ui.dbSection) ui.dbSection.hidden = enabled;
+    if (ui.expRow) ui.expRow.hidden = enabled;
+    if (ui.scopeSummary) ui.scopeSummary.hidden = !enabled;
+    if (ui.panelTitle) {
+      ui.panelTitle.textContent = enabled
+        ? t("stEditPageTitle", "Modifier la page affichee")
+        : t("stPanelTitle", "Outils stock");
+    }
+    if (ui.autoHint) {
+      ui.autoHint.textContent = enabled
+        ? t("stAutoHintPage", "Le prix est recalcule uniquement pour les annonces affichees sur cette page.")
+        : t("stAutoHint",
+          "Le prix est recalcule pour chaque annonce a partir des offres du produit, avec les reglages de la page de vente en masse. Une requete par annonce (hors cache) : commencez par une extension.");
+    }
+  }
+
   function buildPanel() {
     var root = el("div", { id: "cmext-stocktools", className: "cmext-collapsed" });
 
     var tab = el("button", { type: "button", className: "cmext-tab", text: "CMExt" });
     tab.addEventListener("click", function () {
-      root.classList.toggle("cmext-collapsed");
+      if (root.classList.contains("cmext-collapsed")) {
+        setPageOnly(false);
+        root.classList.remove("cmext-collapsed");
+      } else {
+        root.classList.add("cmext-collapsed");
+      }
     });
 
     // --- Section base locale ---
@@ -808,18 +922,28 @@
     ui.previewBox = el("div", { className: "cmext-preview" });
     ui.log = el("div", { className: "cmext-log" });
 
-    var body = el("div", { className: "cmext-body" }, [
-      el("h3", { text: t("stPanelTitle", "Outils stock") }),
+    ui.panelTitle = el("h3", { text: t("stPanelTitle", "Outils stock") });
+    ui.scopeSummary = el("p", {
+      className: "cmext-page-scope",
+      hidden: true,
+      text: t("stPageScope", "Perimetre verrouille : annonces visibles sur cette page uniquement.")
+    });
+    ui.dbSection = el("section", null, [
+      ui.dbSummary,
+      el("div", { className: "cmext-btnrow" }, [ui.scanBtn, ui.racksBtn, ui.clearBtn]),
+      ui.racksBox
+    ]);
+    ui.expRow = labeledRow(t("stExpansion", "Extension"), ui.expSelect);
 
-      el("section", null, [
-        ui.dbSummary,
-        el("div", { className: "cmext-btnrow" }, [ui.scanBtn, ui.racksBtn, ui.clearBtn]),
-        ui.racksBox
-      ]),
+    var body = el("div", { className: "cmext-body" }, [
+      ui.panelTitle,
+      ui.scopeSummary,
+
+      ui.dbSection,
 
       el("section", null, [
         el("h4", { text: t("stMultiEdit", "Multi-edition") }),
-        labeledRow(t("stExpansion", "Extension"), ui.expSelect),
+        ui.expRow,
         labeledRow(t("stCommentFilter", "Filtre commentaire (regex, optionnel)"), ui.filterInput),
         ui.priceRow,
         labeledRow(t("stProperty", "Propriete"), ui.fieldSelect),
@@ -843,11 +967,42 @@
 
   // ---- Cycle de vie ---------------------------------------------------------
   var panel = null;
+  var pageLauncher = null;
+
+  function displayedRowCount() {
+    return document.querySelectorAll('#UserOffersTable .table-body > [id^="stockRow"]').length;
+  }
+
+  function mountPageLauncher() {
+    if (pageLauncher) return;
+    var table = document.getElementById("UserOffersTable");
+    var count = displayedRowCount();
+    if (!table || !count) return;
+
+    pageLauncher = el("div", {
+      id: "cmext-page-bulk-actions",
+      className: "d-flex justify-content-end align-items-center mb-2"
+    });
+    ui.pageBtn = el("button", {
+      type: "button",
+      className: "btn btn-secondary btn-sm",
+      title: t("stEditPageHint", "Modifier uniquement les annonces actuellement affichees."),
+      text: t("stEditPage", "Modifier en masse ($1)", [String(count)])
+    });
+    ui.pageBtn.addEventListener("click", function () {
+      if (state.running) return;
+      setPageOnly(true);
+      panel.classList.remove("cmext-collapsed");
+    });
+    pageLauncher.appendChild(ui.pageBtn);
+    table.parentNode.insertBefore(pageLauncher, table);
+  }
 
   function mount() {
     if (panel) return;
     panel = buildPanel();
     document.body.appendChild(panel);
+    mountPageLauncher();
     refreshDbSummary();
     CMExt.log("StockTools: panneau monte");
   }
@@ -855,6 +1010,9 @@
   function unmount() {
     // On ne demonte jamais pendant un scan/une application en cours.
     if (!panel || state.running) return;
+    if (pageLauncher) pageLauncher.remove();
+    pageLauncher = null;
+    ui.pageBtn = null;
     panel.remove();
     panel = null;
   }
