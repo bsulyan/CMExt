@@ -25,7 +25,15 @@
 
   function readControl(el) {
     if (el.type === "checkbox") return el.checked;
-    if (el.type === "number") return Math.max(1, parseInt(el.value, 10) || 1);
+    if (el.type === "number") {
+      // Le pas decide du type : `step="0.01"` autorise les decimales (montant
+      // de sous-cotation), sinon on reste sur des entiers (quantites, pas).
+      var decimal = el.step && el.step !== "1" && parseFloat(el.step) < 1;
+      var min = el.min === "" ? 1 : parseFloat(el.min);
+      var value = decimal ? parseFloat(el.value) : parseInt(el.value, 10);
+      if (isNaN(value)) value = min;
+      return Math.max(min, value);
+    }
     return el.value;
   }
 

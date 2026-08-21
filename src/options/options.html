@@ -10,15 +10,6 @@
   <main class="wrap">
     <h1 data-i18n="optionsTitle">CardMarket YuGiOh Toolkit</h1>
 
-    <!-- Raretes -->
-    <section class="card">
-      <h2 data-i18n="sectionRarities">Rarities</h2>
-      <label class="row">
-        <input type="checkbox" data-setting="raritiesEnabled" />
-        <span data-i18n="raritiesEnabled">Restore rarity display</span>
-      </label>
-    </section>
-
     <!-- Navigation clavier -->
     <section class="card">
       <h2 data-i18n="sectionKeyboard">BulkListing keyboard navigation</h2>
@@ -26,15 +17,16 @@
         <input type="checkbox" data-setting="keyboardNavEnabled" />
         <span data-i18n="keyboardNavEnabled">Enable keyboard navigation</span>
       </label>
-      <p class="hint" data-i18n="invertNavHint"></p>
-      <label class="row">
-        <input type="checkbox" data-setting="invertNav" />
-        <span data-i18n="invertNav">Invert navigation</span>
-      </label>
+      <p class="hint" data-i18n="keyboardNavHint"></p>
       <label class="row">
         <span data-i18n="quantityStep">Quantity step</span>
         <input type="number" min="1" step="1" data-setting="quantityStep" class="num" />
       </label>
+      <label class="row">
+        <input type="checkbox" data-setting="conditionKeysEnabled" />
+        <span data-i18n="conditionKeysEnabled">Condition shortcuts on rows</span>
+      </label>
+      <p class="hint" data-i18n="conditionKeysHint"></p>
     </section>
 
     <!-- Garde-fous modif de masse -->
@@ -45,6 +37,76 @@
         <span data-i18n="massModGuardsEnabled">Add lock checkboxes</span>
       </label>
       <p class="hint" data-i18n="massModHint"></p>
+    </section>
+
+    <!-- Copier ligne -->
+    <section class="card">
+      <h2 data-i18n="sectionRowCopy">Row duplication</h2>
+      <label class="row">
+        <input type="checkbox" data-setting="rowCopyFixEnabled" />
+        <span data-i18n="rowCopyFixEnabled">Keep the values when duplicating a row</span>
+      </label>
+      <p class="hint" data-i18n="rowCopyHint"></p>
+    </section>
+
+    <!-- Prix conseille -->
+    <section class="card">
+      <h2 data-i18n="sectionAutoPrice">Suggested price</h2>
+      <label class="row">
+        <input type="checkbox" data-setting="autoPriceEnabled" />
+        <span data-i18n="autoPriceEnabled">Add the price button on filled rows</span>
+      </label>
+      <p class="hint" data-i18n="autoPriceHint"></p>
+      <label class="row">
+        <span data-i18n="priceMinQty">Cumulated copies</span>
+        <input type="number" min="1" step="1" data-setting="priceMinQty" class="num" />
+      </label>
+      <label class="row">
+        <span data-i18n="priceMinSellers">Distinct sellers</span>
+        <input type="number" min="1" step="1" data-setting="priceMinSellers" class="num" />
+      </label>
+      <label class="row">
+        <span data-i18n="priceSoloSellerQty">Lone seller copies</span>
+        <input type="number" min="1" step="1" data-setting="priceSoloSellerQty" class="num" />
+      </label>
+      <label class="row">
+        <span data-i18n="priceSellerCountry">Seller country</span>
+        <input type="number" min="0" step="1" data-setting="priceSellerCountry" class="num" />
+      </label>
+      <label class="row">
+        <span data-i18n="priceOutlierRatio">Outlier ratio</span>
+        <input type="number" min="0" max="1" step="0.05" data-setting="priceOutlierRatio" class="num" />
+      </label>
+      <label class="row">
+        <span data-i18n="priceUndercut">Undercut</span>
+        <input type="number" min="0" step="0.01" data-setting="priceUndercut" class="num" />
+      </label>
+      <p class="hint" data-i18n="priceThresholdsHint"></p>
+      <label class="row">
+        <span data-i18n="priceMaxUpgradeRanks">Condition steps allowed to scale a price up</span>
+        <input type="number" min="0" max="5" step="1" data-setting="priceMaxUpgradeRanks" class="num" />
+      </label>
+      <p class="hint" data-i18n="priceUpgradeHint"></p>
+    </section>
+
+    <!-- Outils stock -->
+    <section class="card">
+      <h2 data-i18n="sectionStockTools">Stock tools</h2>
+      <label class="row">
+        <input type="checkbox" data-setting="stockToolsEnabled" />
+        <span data-i18n="stockToolsEnabled">Enable the stock tools panel</span>
+      </label>
+      <p class="hint" data-i18n="stockToolsHint"></p>
+    </section>
+
+    <!-- Total des commandes -->
+    <section class="card">
+      <h2 data-i18n="sectionOrderTotals">Order totals</h2>
+      <label class="row">
+        <input type="checkbox" data-setting="orderTotalsEnabled" />
+        <span data-i18n="orderTotalsEnabled">Show the order total next to the order count</span>
+      </label>
+      <p class="hint" data-i18n="orderTotalsHint"></p>
     </section>
 
     <!-- Avance -->

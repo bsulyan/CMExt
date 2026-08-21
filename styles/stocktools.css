@@ -1,0 +1,198 @@
+/*
+ * stocktools.css — Panneau "Outils stock" (stocktools.js).
+ * Panneau flottant en bas a droite, replie par defaut sur un simple onglet.
+ * Couleurs neutres compatibles avec le theme sombre du site.
+ */
+
+#cmext-stocktools {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 99999;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 13px;
+  color: #e5e7eb;
+  text-align: left;
+}
+
+#cmext-stocktools .cmext-tab {
+  display: block;
+  margin-left: auto;
+  padding: 6px 14px;
+  border: 1px solid #7c3aed;
+  border-radius: 8px;
+  background: #1f1b2e;
+  color: #c4b5fd;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#cmext-stocktools .cmext-body {
+  margin-top: 6px;
+  width: min(560px, calc(100vw - 24px));
+  max-height: min(70vh, 640px);
+  overflow-y: auto;
+  padding: 12px;
+  border: 1px solid #3f3f46;
+  border-radius: 10px;
+  background: #18181b;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+#cmext-stocktools.cmext-collapsed .cmext-body {
+  display: none;
+}
+
+#cmext-stocktools h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #c4b5fd;
+}
+
+#cmext-stocktools h4 {
+  margin: 12px 0 6px;
+  font-size: 13px;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+#cmext-stocktools section {
+  padding: 8px 0;
+  border-top: 1px solid #27272a;
+}
+
+#cmext-stocktools .cmext-summary {
+  margin: 0 0 6px;
+  color: #a1a1aa;
+}
+
+#cmext-stocktools .cmext-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+#cmext-stocktools .cmext-row > span {
+  flex: 0 0 200px;
+  color: #a1a1aa;
+}
+
+#cmext-stocktools .cmext-row > input,
+#cmext-stocktools .cmext-row > select,
+#cmext-stocktools > .cmext-body input[type="text"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 4px 8px;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  background: #0f0f11;
+  color: #e5e7eb;
+}
+
+/* Deux controles dans une meme ligne (operateur + montant du filtre prix). */
+#cmext-stocktools .cmext-inline {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 6px;
+}
+
+#cmext-stocktools .cmext-inline > select {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  background: #0f0f11;
+  color: #e5e7eb;
+}
+
+#cmext-stocktools .cmext-inline > input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 4px 8px;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  background: #0f0f11;
+  color: #e5e7eb;
+}
+
+#cmext-stocktools .cmext-btnrow {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+
+#cmext-stocktools .cmext-btnrow button {
+  padding: 5px 12px;
+  border: 1px solid #52525b;
+  border-radius: 6px;
+  background: #27272a;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+#cmext-stocktools .cmext-btnrow button:hover:not(:disabled) {
+  border-color: #7c3aed;
+  color: #c4b5fd;
+}
+
+#cmext-stocktools .cmext-btnrow button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+#cmext-stocktools .cmext-table {
+  width: 100%;
+  margin: 6px 0;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+#cmext-stocktools .cmext-table th,
+#cmext-stocktools .cmext-table td {
+  padding: 3px 6px;
+  border: 1px solid #27272a;
+  text-align: left;
+  vertical-align: top;
+}
+
+#cmext-stocktools .cmext-table th {
+  background: #1f1f23;
+  color: #a1a1aa;
+}
+
+#cmext-stocktools .cmext-racks,
+#cmext-stocktools .cmext-preview {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+#cmext-stocktools .cmext-log {
+  margin-top: 8px;
+  max-height: 140px;
+  overflow-y: auto;
+  padding: 6px 8px;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  background: #0f0f11;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+#cmext-stocktools .cmext-log:empty {
+  display: none;
+}
+
+#cmext-stocktools .cmext-ok { color: #4ade80; }
+#cmext-stocktools .cmext-err { color: #f87171; }
+#cmext-stocktools .cmext-dim { color: #71717a; }
+
+#cmext-stocktools .cmext-hint {
+  margin: 4px 0;
+  color: #71717a;
+  font-size: 12px;
+}

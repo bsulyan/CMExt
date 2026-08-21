@@ -4,6 +4,84 @@
  * de la modification de masse seront implementes.
  *
  * Pistes prevues :
- *   - surbrillance de la cellule active (.cmext-active-cell)
+ *   - surbrillance de la cellule active (focus clavier)
  *   - style des cases de verrouillage injectees dans le bloc modif de masse
  */
+
+/* ---- Prix conseille ------------------------------------------------------
+ * Le champ prix se colore selon la fiabilite du calcul ; le detail (offres
+ * retenues, reperes de la page) est dans l'infobulle du champ et du bouton. */
+#BulkListingForm input[name^="price["].cmext-price-ok {
+  background-color: rgba(22, 163, 74, 0.12);
+  border-color: #16a34a;
+}
+
+#BulkListingForm input[name^="price["].cmext-price-weak {
+  background-color: rgba(217, 119, 6, 0.14);
+  border-color: #d97706;
+}
+
+/* Aucun prix ecrit : la case reste telle quelle, seul le cadre signale
+ * que le calcul n'a rien donne. */
+#BulkListingForm input[name^="price["].cmext-price-none {
+  border-color: #dc2626;
+  border-style: dashed;
+}
+
+.cmext-price-btn {
+  min-width: 4.5rem;
+  white-space: nowrap;
+}
+
+.cmext-price-btn.is-busy {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.cmext-price-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.cmext-price-status {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Lien deguise en bouton : ouvrir la page qui a declenche la verification
+ * anti-robot est la seule facon de la lever, un fetch n'y arrivera jamais. */
+.cmext-price-check,
+.cmext-price-check:hover {
+  text-decoration: none;
+}
+
+/* ---- Raccourcis d'etat ---------------------------------------------------
+ * La lettre est frappee depuis n'importe quelle cellule de la ligne : le champ
+ * touche clignote pour montrer ce qui vient d'etre pose, meme hors du regard. */
+#BulkListingForm select.cmext-key-set {
+  background-color: rgba(124, 58, 237, 0.18);
+  border-color: #7c3aed;
+  transition: background-color 0.25s ease-out;
+}
+
+/* Sur la case 1re edition, seul un contour convient : un fond violet passerait
+ * par-dessus le bleu de la case cochee, et on ne verrait plus l'etat pose. */
+#BulkListingForm input[type="checkbox"].cmext-key-set {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+/* Cellule editable focalisee : rend la navigation clavier lisible d'un coup
+ * d'oeil, sans dependre du style de focus (parfois discret) du theme. */
+#BulkListingForm select:focus,
+#BulkListingForm input[name^="comments["]:focus,
+#BulkListingForm input[name^="amount["]:focus,
+#BulkListingForm input[name^="price["]:focus {
+  outline: 2px solid #7c3aed;
+  outline-offset: 0;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.35);
+}

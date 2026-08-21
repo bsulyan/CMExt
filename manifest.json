@@ -14,12 +14,16 @@
       "matches": ["https://www.cardmarket.com/*/YuGiOh/*"],
       "js": [
         "src/content/common.js",
-        "src/content/rarities.js",
-        "src/content/bulklisting.js"
+        "src/content/pricing.js",
+        "src/content/marketdata.js",
+        "src/content/bulklisting.js",
+        "src/content/ordertotals.js",
+        "src/content/stockdb.js",
+        "src/content/stocktools.js"
       ],
       "css": [
-        "styles/rarities.css",
-        "styles/bulklisting.css"
+        "styles/bulklisting.css",
+        "styles/stocktools.css"
       ],
       "run_at": "document_idle"
     }

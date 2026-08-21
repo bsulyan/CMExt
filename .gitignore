@@ -12,3 +12,6 @@ desktop.ini
 *.zip
 dist/
 node_modules/
+
+# Dumps de pages CardMarket sauvegardees (inspection du DOM)
+*.txt
